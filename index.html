@@ -1,221 +1,155 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Painel de Pacientes - Hospital Monporto</title>
+  <title>Hospital Monporto - Painel de Pacientes</title>
   <style>
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f4f8;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #bbdefb);
       margin: 0;
       padding: 0;
     }
-
     header {
-      background: linear-gradient(135deg, #0062cc, #004085);
+      background: #0d47a1;
       color: white;
       padding: 20px;
       text-align: center;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
-
-    header span {
+    header small {
       display: block;
-      font-size: 16px;
-      font-weight: normal;
+      font-size: 14px;
+      margin-top: 5px;
+      color: #c5cae9;
     }
-
-    main {
-      max-width: 1100px;
-      margin: 30px auto;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
       padding: 20px;
     }
-
-    .form-card {
+    .card {
       background: white;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
+    h2 {
+      margin-top: 0;
+      color: #0d47a1;
     }
-
-    input, select {
-      flex: 1;
+    input, button {
       padding: 10px;
-      border-radius: 8px;
+      margin: 5px 0;
+      width: 100%;
       border: 1px solid #ccc;
-    }
-
-    button {
-      padding: 10px 16px;
-      border: none;
       border-radius: 8px;
-      background: #0062cc;
+    }
+    button {
+      background: #0d47a1;
       color: white;
+      border: none;
       cursor: pointer;
       transition: 0.3s;
     }
-
     button:hover {
-      background: #004085;
+      background: #1565c0;
     }
-
-    .painel {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .setor {
-      background: white;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-
-    .setor h2 {
-      margin-top: 0;
-      color: #0062cc;
-      font-size: 18px;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 8px;
-    }
-
     ul {
       list-style: none;
       padding: 0;
-      margin: 0;
     }
-
     li {
-      background: #f8f9fa;
-      margin: 6px 0;
-      padding: 8px;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #e3f2fd;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 8px;
     }
-
-    .remover {
-      background: red;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
     }
-    .remover:hover {
-      background: darkred;
-    }
+    .success { color: green; }
+    .error { color: red; }
   </style>
 </head>
 <body>
   <header>
     Hospital Monporto
-    <span>"Cuidando de você com excelência e dedicação"</span>
+    <small>Cuidando da sua saúde com excelência</small>
   </header>
 
-  <main>
+  <div class="container">
     <!-- Cadastro -->
-    <div class="form-card">
+    <div class="card">
       <h2>Cadastrar Paciente</h2>
-      <form id="formCadastro">
-        <input type="text" id="nomePaciente" placeholder="Nome ou Nº de atendimento" required>
-        <select id="setorPaciente">
-          <option value="A">Setor A</option>
-          <option value="B">Setor B</option>
-          <option value="UTI">UTI</option>
-          <option value="Altas">Últimas Altas</option>
-        </select>
-        <button type="submit">Adicionar</button>
-      </form>
+      <input type="text" id="pacienteInput" placeholder="Nome ou número de atendimento">
+      <button onclick="adicionarPaciente()">Cadastrar</button>
+      <ul id="listaPacientes"></ul>
     </div>
 
-    <!-- Painel -->
-    <div class="painel">
-      <div class="setor">
-        <h2>Setor A</h2>
-        <ul id="listaA"></ul>
-      </div>
-      <div class="setor">
-        <h2>Setor B</h2>
-        <ul id="listaB"></ul>
-      </div>
-      <div class="setor">
-        <h2>UTI</h2>
-        <ul id="listaUTI"></ul>
-      </div>
-      <div class="setor">
-        <h2>Últimas Altas</h2>
-        <ul id="listaAltas"></ul>
-      </div>
+    <!-- Pesquisa -->
+    <div class="card">
+      <h2>Pesquisar Paciente</h2>
+      <input type="text" id="pesquisaInput" placeholder="Digite o nome ou número">
+      <button onclick="pesquisarPaciente()">Pesquisar</button>
+      <div id="resultadoPesquisa" class="result"></div>
     </div>
-  </main>
+
+    <!-- Setores -->
+    <div class="card">
+      <h2>Pacientes - UTI</h2>
+      <ul id="uti"></ul>
+    </div>
+    <div class="card">
+      <h2>Últimas Altas</h2>
+      <ul id="altas"></ul>
+    </div>
+  </div>
 
   <script>
-    // Funções de acesso ao localStorage
-    function getPacientes() {
-      return JSON.parse(localStorage.getItem("pacientes")) || [];
-    }
+    let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
 
-    function savePacientes(pacientes) {
+    function salvar() {
       localStorage.setItem("pacientes", JSON.stringify(pacientes));
     }
 
-    function renderListas() {
-      const setores = { "A": "listaA", "B": "listaB", "UTI": "listaUTI", "Altas": "listaAltas" };
-      const pacientes = getPacientes();
-
-      // limpar listas
-      Object.values(setores).forEach(id => {
-        document.getElementById(id).innerHTML = "";
-      });
-
-      // popular listas
-      pacientes.forEach((p, index) => {
+    function renderizarLista() {
+      const lista = document.getElementById("listaPacientes");
+      lista.innerHTML = "";
+      pacientes.forEach(p => {
         const li = document.createElement("li");
-        li.textContent = p.nome;
-        const btn = document.createElement("button");
-        btn.textContent = "Remover";
-        btn.classList.add("remover");
-        btn.onclick = () => {
-          let lista = getPacientes();
-          lista.splice(index, 1);
-          savePacientes(lista);
-          renderListas();
-        };
-        li.appendChild(btn);
-        document.getElementById(setores[p.setor]).appendChild(li);
+        li.textContent = p;
+        lista.appendChild(li);
       });
     }
 
-    // Cadastro
-    document.getElementById("formCadastro").addEventListener("submit", e => {
-      e.preventDefault();
-      const nome = document.getElementById("nomePaciente").value.trim();
-      const setor = document.getElementById("setorPaciente").value;
-      if (!nome) return;
+    function adicionarPaciente() {
+      const input = document.getElementById("pacienteInput");
+      const nome = input.value.trim();
+      if(nome) {
+        pacientes.push(nome);
+        salvar();
+        renderizarLista();
+        input.value = "";
+      }
+    }
 
-      let pacientes = getPacientes();
-      pacientes.push({ nome, setor });
-      savePacientes(pacientes);
-      renderListas();
-      document.getElementById("formCadastro").reset();
-    });
+    function pesquisarPaciente() {
+      const termo = document.getElementById("pesquisaInput").value.trim();
+      const resultado = document.getElementById("resultadoPesquisa");
+      if (pacientes.includes(termo)) {
+        resultado.textContent = "✅ Paciente encontrado!";
+        resultado.className = "result success";
+      } else {
+        resultado.textContent = "❌ Paciente não consta no sistema.";
+        resultado.className = "result error";
+      }
+    }
 
-    // Inicializar
-    renderListas();
+    renderizarLista();
   </script>
 </body>
 </html>
